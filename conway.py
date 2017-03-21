@@ -80,7 +80,23 @@ def update_grid(grid):
     - When a cell is turning ON, the most common color among the neighbors are used.
     - If there's a tie on colors among the neighbors, pick random."""
 
-    updated_grid = grid[:]
+    new_grid = []
+
+    for row_idx, row in enumerate(grid):
+        new_row = []
+        for col_idx, col in enumerate(row):
+            neighbors = count_neighbors(grid, row_idx, col_idx)
+            if col == 1 and (neighbors > 3 or neighbors < 2):
+                new_row.append(0)
+            elif col == 0 and neighbors == 3:
+                new_row.append(1)
+            elif col == 0 or col == 1:
+                new_row.append(col)
+            else:
+                raise ValueError("Invalid grid")
+        new_grid.append(new_row)
+
+    return new_grid
 
 
 def main():
@@ -104,7 +120,7 @@ def main():
 
         # Clear screen and tick
         screen.fill(BLACK)
-        timer.tick(60)
+        timer.tick(5)
 
 
 # Setup
@@ -124,6 +140,8 @@ COLOR_DICT = {
     'G': GREEN,
     'W': WHITE
 }
+
+pygame.display.set_caption("Conway's Game of Life Color Edition")
 
 if __name__ == '__main__':
     main()

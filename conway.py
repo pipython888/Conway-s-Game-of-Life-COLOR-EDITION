@@ -48,6 +48,8 @@ def render_grid(grid, colors):
 
 
 def count_neighbors(grid, row, col):
+    """Counts the amount of neighbors around a cell."""
+
     neighbors = 0
 
     # Horizantal and Vertical Neighbors
@@ -65,7 +67,37 @@ def count_neighbors(grid, row, col):
     return neighbors
 
 
-def update_grid(grid):
+def get_color(colors, row, col):
+    """Gets the color a newcomer cell should be."""
+
+    neighbor_colors = []
+
+    # Horizantal and Vertical Neighbors
+    neighbor_colors.append(index(index(colors, row + 1), col))
+    neighbor_colors.append(index(index(colors, row - 1), col))
+    neighbor_colors.append(index(index(colors, row), col - 1))
+    neighbor_colors.append(index(index(colors, row), col + 1))
+
+    # Diagonal Neighbors
+    neighbor_colors.append(index(index(colors, row + 1), col + 1))
+    neighbor_colors.append(index(index(colors, row - 1), col - 1))
+    neighbor_colors.append(index(index(colors, row - 1), col + 1))
+    neighbor_colors.append(index(index(colors, row + 1), col - 1))
+
+    result_color = ""
+    color_count = 0
+    for color in neighbor_colors:
+        if neighbor_colors.count(color) > color_count:
+            result_color = color
+            color_count = neighbor_colors.count(color)
+        if neighbor_colors.count(color) == color_count:
+            result_color = choice([result_color, color])
+            color_count = neighbor_colors.count(color)
+
+    return result_color
+
+
+def update_grid(grid, colors):
     """Updates the grid, following the rules of Conway's Game of Life.
 
     - If there are any ON cells with over 3 neighbors, they turn OFF.
@@ -81,22 +113,28 @@ def update_grid(grid):
     - If there's a tie on colors among the neighbors, pick random."""
 
     new_grid = []
+    new_colors = []
 
     for row_idx, row in enumerate(grid):
         new_row = []
+        new_color_row = []
         for col_idx, col in enumerate(row):
             neighbors = count_neighbors(grid, row_idx, col_idx)
             if col == 1 and (neighbors > 3 or neighbors < 2):
                 new_row.append(0)
+                new_color_row.append(get_color(colors, row_idx, col_idx))
             elif col == 0 and neighbors == 3:
                 new_row.append(1)
+                new_color_row.append(colors[row_idx][col_idx])
             elif col == 0 or col == 1:
                 new_row.append(col)
+                new_color_row.append(colors[row_idx][col_idx])
             else:
                 raise ValueError("Invalid grid")
         new_grid.append(new_row)
+        new_colors.append(new_color_row)
 
-    return new_grid
+    return new_grid, new_colors
 
 
 def main():
@@ -116,7 +154,7 @@ def main():
 
         pygame.display.update()
 
-        grid = update_grid(grid)
+        grid, colors = update_grid(grid, colors)
 
         # Clear screen and tick
         screen.fill(BLACK)

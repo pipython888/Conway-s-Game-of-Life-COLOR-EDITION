@@ -7,8 +7,9 @@ pygame.init()
 # Configurable Values
 WIDTH = 1000  # Screen width
 HEIGHT = 1000  # Screen height
-CELL_SIZE = 10  # Cell size
+CELL_SIZE = 15  # Cell size
 COLOR_ON = True  # Toggle Color Edition
+SPEED = 4
 
 
 def index(L, idx):
@@ -26,7 +27,7 @@ def create_grid(width, height):
         color_row = []
         for _ in range(width):
             row.append(randint(0, 1))
-            color_row.append(choice(['Y', 'W', 'G', 'B']))
+            color_row.append(choice(list(COLOR_DICT.keys())))
         result_grid.append(row)
         result_colors.append(color_row)
 
@@ -168,7 +169,7 @@ def main():
 
         # Clear screen and tick
         screen.fill(BLACK)
-        timer.tick(5)
+        timer.tick(20 // SPEED)
 
 
 # Setup
@@ -178,17 +179,23 @@ screen = pygame.display.set_mode([WIDTH, HEIGHT])
 timer = pygame.time.Clock()
 
 # Colors
-YELLOW = (255, 255, 153)
-WHITE = (250, 250, 250)
-GREEN = (0, 250, 5)
-BLUE = (70, 70, 255)
-BLACK = (0, 0, 0)
+YELLOW = 255, 255, 153
+WHITE = 250, 250, 250
+GREEN = 0, 250, 5
+BLUE = 100, 200, 255
+RED = 255, 100, 50
+DARK_BLUE = 40, 120, 180
+DARK_GREEN = 100, 180, 40
+BLACK = 0, 0, 0
 
 COLOR_DICT = {
     'Y': YELLOW,
     'G': GREEN,
     'W': WHITE,
-    'B': BLUE
+    'B': BLUE,
+    'R': RED,
+    'DB': DARK_BLUE,
+    'DG': DARK_GREEN
 }
 
 pygame.display.set_caption("Conway's Game of Life Color Edition")

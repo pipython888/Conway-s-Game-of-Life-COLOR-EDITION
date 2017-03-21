@@ -2,13 +2,13 @@ import pygame
 
 pygame.init()
 
-#### CONFIGUREABLE VALUES ####
+# CONFIGUREABLE VALUES
 
 WIDTH = 500  # Screen width
 HEIGHT = 500  # Screen height
 CELL_SIZE = 10  # Cell size
 
-##############################
+######################
 
 # Setup
 

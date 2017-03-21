@@ -5,9 +5,10 @@ import pygame
 pygame.init()
 
 # Configurable Values
-WIDTH = 500  # Screen width
-HEIGHT = 500  # Screen height
+WIDTH = 1000  # Screen width
+HEIGHT = 1000  # Screen height
 CELL_SIZE = 10  # Cell size
+COLOR_ON = True  # Toggle Color Edition
 
 
 def index(L, idx):
@@ -25,7 +26,7 @@ def create_grid(width, height):
         color_row = []
         for _ in range(width):
             row.append(randint(0, 1))
-            color_row.append(choice(['Y', 'W', 'G']))
+            color_row.append(choice(['Y', 'W', 'G', 'B']))
         result_grid.append(row)
         result_colors.append(color_row)
 
@@ -40,8 +41,8 @@ def render_grid(grid, colors):
     for row, color_row in zip(grid, colors):
         for col, color_col in zip(row, color_row):
             if col == 1:
-                pygame.draw.rect(screen, COLOR_DICT[color_col],
-                                 [x, y, CELL_SIZE, CELL_SIZE])
+                color = COLOR_DICT[color_col] if COLOR_ON else GREEN
+                pygame.draw.rect(screen, color, [x, y, CELL_SIZE, CELL_SIZE])
             x += CELL_SIZE
         x = 0
         y += CELL_SIZE
@@ -140,6 +141,8 @@ def update_grid(grid, colors):
 def main():
     """The game loop and game setup"""
 
+    global COLOR_ON
+
     grid, colors = create_grid(WIDTH // CELL_SIZE, HEIGHT // CELL_SIZE)
 
     done = False
@@ -148,6 +151,13 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 done = True
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_r:
+                    grid, colors = create_grid(WIDTH // CELL_SIZE, HEIGHT // CELL_SIZE)
+
+                if event.key == pygame.K_c:
+                    COLOR_ON = not COLOR_ON
 
         # Display graphics
         render_grid(grid, colors)
@@ -171,12 +181,14 @@ timer = pygame.time.Clock()
 YELLOW = (255, 255, 153)
 WHITE = (250, 250, 250)
 GREEN = (0, 250, 5)
+BLUE = (70, 70, 255)
 BLACK = (0, 0, 0)
 
 COLOR_DICT = {
     'Y': YELLOW,
     'G': GREEN,
-    'W': WHITE
+    'W': WHITE,
+    'B': BLUE
 }
 
 pygame.display.set_caption("Conway's Game of Life Color Edition")

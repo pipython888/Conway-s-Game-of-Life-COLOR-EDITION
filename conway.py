@@ -2,7 +2,7 @@ import pygame
 
 pygame.init()
 
-# CONFIGUREABLE VALUES
+# CONFIGURABLE VALUES
 
 WIDTH = 500  # Screen width
 HEIGHT = 500  # Screen height

@@ -4,20 +4,17 @@ import pygame
 
 pygame.init()
 
-# CONFIGURABLE VALUES
-
+# Configurable Values
 WIDTH = 500  # Screen width
 HEIGHT = 500  # Screen height
 CELL_SIZE = 10  # Cell size
-
-######################
 
 
 def create_grid(width, height):
     """Creates and returns a random grid."""
 
-    grid = []
-    colors = []
+    result_grid = []
+    result_colors = []
 
     for _ in range(height):
         row = []
@@ -25,27 +22,21 @@ def create_grid(width, height):
         for _ in range(width):
             row.append(randint(0, 1))
             color_row.append(choice(['Y', 'W', 'G']))
-        grid.append(row)
-        colors.append(color_row)
+        result_grid.append(row)
+        result_colors.append(color_row)
 
-    return grid, colors
+    return result_grid, result_colors
 
 
 def render_grid(grid, colors):
     """Renders a grid."""
-
-    color_dict = {
-        'Y': YELLOW,
-        'G': GREEN,
-        'W': WHITE
-    }
 
     x = 0
     y = 0
     for row, color_row in zip(grid, colors):
         for col, color_col in zip(row, color_row):
             if col == 1:
-                pygame.draw.rect(screen, color_dict[color_col],
+                pygame.draw.rect(screen, COLOR_DICT[color_col],
                                  [x, y, CELL_SIZE, CELL_SIZE])
             x += CELL_SIZE
         x = 0
@@ -63,6 +54,12 @@ YELLOW = (255, 255, 153)
 WHITE = (250, 250, 250)
 GREEN = (0, 250, 5)
 BLACK = (0, 0, 0)
+
+COLOR_DICT = {
+    'Y': YELLOW,
+    'G': GREEN,
+    'W': WHITE
+}
 
 # Game Setup
 

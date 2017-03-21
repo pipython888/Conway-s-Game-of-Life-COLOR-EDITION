@@ -10,6 +10,10 @@ HEIGHT = 500  # Screen height
 CELL_SIZE = 10  # Cell size
 
 
+def index(L, idx):
+    return L[idx % len(L)]
+
+
 def create_grid(width, height):
     """Creates and returns a random grid."""
 
@@ -43,6 +47,66 @@ def render_grid(grid, colors):
         y += CELL_SIZE
 
 
+def count_neighbors(grid, row, col):
+    neighbors = 0
+
+    # Horizantal and Vertical Neighbors
+    neighbors += index(index(grid, row + 1), col)
+    neighbors += index(index(grid, row - 1), col)
+    neighbors += index(index(grid, row), col - 1)
+    neighbors += index(index(grid, row), col + 1)
+
+    # Diagonal Neighbors
+    neighbors += index(index(grid, row + 1), col + 1)
+    neighbors += index(index(grid, row - 1), col - 1)
+    neighbors += index(index(grid, row - 1), col + 1)
+    neighbors += index(index(grid, row + 1), col - 1)
+
+    return neighbors
+
+
+def update_grid(grid):
+    """Updates the grid, following the rules of Conway's Game of Life.
+
+    - If there are any ON cells with over 3 neighbors, they turn OFF.
+    - If there are any ON cells with under 2 neighbors, they turn OFF.
+    - If there are any ON cells with 2 or 3 neighbors, they stay ON.
+    - If there are any OFF cells with EXACTLY 3 neihgbors, they turn ON.
+
+    Also, to make the simulation interesting, I am adding these rules to decide color:
+
+    - Color is decided when an OFF cell turns ON. Cells doesn't change color until they
+    turn OFF.
+    - When a cell is turning ON, the most common color among the neighbors are used.
+    - If there's a tie on colors among the neighbors, pick random."""
+
+    updated_grid = grid[:]
+
+
+def main():
+    """The game loop and game setup"""
+
+    grid, colors = create_grid(WIDTH // CELL_SIZE, HEIGHT // CELL_SIZE)
+
+    done = False
+    while not done:
+        # Event handlers
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                done = True
+
+        # Display graphics
+        render_grid(grid, colors)
+
+        pygame.display.update()
+
+        grid = update_grid(grid)
+
+        # Clear screen and tick
+        screen.fill(BLACK)
+        timer.tick(60)
+
+
 # Setup
 
 screen = pygame.display.set_mode([WIDTH, HEIGHT])
@@ -61,25 +125,7 @@ COLOR_DICT = {
     'W': WHITE
 }
 
-# Game Setup
-
-grid, colors = create_grid(WIDTH // CELL_SIZE, HEIGHT // CELL_SIZE)
-
-# Game loop
-done = False
-while not done:
-    # Event handlers
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            done = True
-
-    # Display graphics
-    render_grid(grid, colors)
-
-    pygame.display.update()
-
-    # Clear screen and tick
-    screen.fill(BLACK)
-    timer.tick(60)
+if __name__ == '__main__':
+    main()
 
 pygame.quit()

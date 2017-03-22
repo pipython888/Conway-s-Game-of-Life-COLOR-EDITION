@@ -8,10 +8,10 @@ pygame.init()
 # Configurable Values
 WIDTH = 1000  # Screen width
 HEIGHT = 1000  # Screen height
-CELL_SIZE = 20  # Cell size
+CELL_SIZE = 10  # Cell size
 COLOR_ON = True  # Toggle Color Edition
 TIME_PER_FRAME = 0.1  # The amount of seconds you should wait between each frame
-OUTLINE = 8  # If zero, all cells will be filled. If any other value, will draw outlined rectangle.
+OUTLINE = 0  # If zero, all cells will be filled. If any other value, will draw outlined rectangle.
 
 
 def index(L, idx):
@@ -102,9 +102,9 @@ def get_color(colors, row, col):
         if amount > result_amount:
             result = color
             result_amount = amount
-        if amount == result_amount:
-            result = choice([result, color])
-            result_amount = amount
+            # if amount == result_amount:
+            #    result = choice([result, color])
+            #    result_amount = amount
 
     return result
 

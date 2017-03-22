@@ -1,4 +1,5 @@
 from random import randint, choice
+from time import sleep
 
 import pygame
 
@@ -7,9 +8,10 @@ pygame.init()
 # Configurable Values
 WIDTH = 1000  # Screen width
 HEIGHT = 1000  # Screen height
-CELL_SIZE = 15  # Cell size
+CELL_SIZE = 20  # Cell size
 COLOR_ON = True  # Toggle Color Edition
-SPEED = 4
+TIME_PER_FRAME = 0.1  # The amount of seconds you should wait between each frame
+OUTLINE = 8  # If zero, all cells will be filled. If any other value, will draw outlined rectangle.
 
 
 def index(L, idx):
@@ -43,7 +45,7 @@ def render_grid(grid, colors):
         for col, color_col in zip(row, color_row):
             if col == 1:
                 color = COLOR_DICT[color_col] if COLOR_ON else GREEN
-                pygame.draw.rect(screen, color, [x, y, CELL_SIZE, CELL_SIZE])
+                pygame.draw.rect(screen, color, [x, y, CELL_SIZE - OUTLINE, CELL_SIZE - OUTLINE], OUTLINE)
             x += CELL_SIZE
         x = 0
         y += CELL_SIZE
@@ -86,17 +88,25 @@ def get_color(colors, row, col):
     neighbor_colors.append(index(index(colors, row - 1), col + 1))
     neighbor_colors.append(index(index(colors, row + 1), col - 1))
 
-    result_color = ""
-    color_count = 0
-    for color in neighbor_colors:
-        if neighbor_colors.count(color) > color_count:
-            result_color = color
-            color_count = neighbor_colors.count(color)
-        if neighbor_colors.count(color) == color_count:
-            result_color = choice([result_color, color])
-            color_count = neighbor_colors.count(color)
+    colors_with_quantities = {}
 
-    return result_color
+    for color in neighbor_colors:
+        try:
+            colors_with_quantities[color] += 1
+        except KeyError:
+            colors_with_quantities[color] = 1
+
+    result = ""
+    result_amount = 0
+    for color, amount in colors_with_quantities.items():
+        if amount > result_amount:
+            result = color
+            result_amount = amount
+        if amount == result_amount:
+            result = choice([result, color])
+            result_amount = amount
+
+    return result
 
 
 def update_grid(grid, colors):
@@ -146,6 +156,8 @@ def main():
 
     grid, colors = create_grid(WIDTH // CELL_SIZE, HEIGHT // CELL_SIZE)
 
+    paused = False
+
     done = False
     while not done:
         # Event handlers
@@ -160,16 +172,24 @@ def main():
                 if event.key == pygame.K_c:
                     COLOR_ON = not COLOR_ON
 
+                if event.key == pygame.K_SPACE:
+                    paused = not paused
+
+                if event.key == pygame.K_RIGHT and paused:
+                    grid, colors = update_grid(grid, colors)
+
         # Display graphics
         render_grid(grid, colors)
 
         pygame.display.update()
 
-        grid, colors = update_grid(grid, colors)
+        if not paused:
+            grid, colors = update_grid(grid, colors)
 
         # Clear screen and tick
         screen.fill(BLACK)
-        timer.tick(20 // SPEED)
+        timer.tick(20)
+        sleep(TIME_PER_FRAME)
 
 
 # Setup
@@ -185,7 +205,7 @@ GREEN = 0, 250, 5
 BLUE = 100, 200, 255
 RED = 255, 100, 50
 DARK_BLUE = 40, 120, 180
-DARK_GREEN = 100, 180, 40
+DARK_GREEN = 70, 150, 40
 BLACK = 0, 0, 0
 
 COLOR_DICT = {
